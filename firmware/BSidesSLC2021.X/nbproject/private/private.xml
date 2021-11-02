@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/pwm5.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/i2c.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/ledDriver.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/tmr2.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/i2c1_master.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/examples/i2c1_master_example.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/i2c.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/memory.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/i2c1_master.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/adc.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/main.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/memory.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/FrameBuffer.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/main.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/FrameBuffer.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mems.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/resources.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/mcc.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/IR.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/ext_int.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/IR.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/Scenes.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/adc.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/mcc.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/SSD1306.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/device_config.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/interrupt_manager.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/SSD1306.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/pin_manager.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/pin_manager.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/font5x7.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/interrupt_manager.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/device_config.h</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/Secens.c</file>
+            <file>file:/Users/plum/MPLABXProjects/BSidesSLC2021.X/mcc_generated_files/fvr.c</file>
+        </group>
+    </open-files>
+</project-private>
