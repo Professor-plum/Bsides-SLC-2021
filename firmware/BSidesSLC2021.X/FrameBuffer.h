@@ -19,7 +19,7 @@ extern uint8_t canvas[];
   
 void canvas_clearScreen(void);
 
-void canvas_drawPixel(int x, int y, bool on);
+void canvas_drawPixel(int x, int y);
 
 void canvas_drawLine(int x1, int y1, int x2, int y2);
 void canvas_drawHorizontalLine(int x1, int y, int x2);

@@ -370,7 +370,7 @@
         <property key="memories.rww" value="true"/>
         <property key="poweroptions.powerenable" value="true"/>
         <property key="programmerToGoFilePath"
-                  value="/Users/plum/MPLABXProjects/BSidesSLC2021.X/debug/default/BSidesSLC2021_ptg"/>
+                  value="/Users/plum/git/Bsides-SLC-2021/firmware/BSidesSLC2021.X/debug/default/BSidesSLC2021_ptg"/>
         <property key="programmerToGoImageName" value="BSidesSLC2021_ptg"/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>

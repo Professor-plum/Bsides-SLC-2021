@@ -52,19 +52,15 @@
 
 uint8_t mm=0;
 uint32_t millis;
-uint32_t game_state;
+uint16_t game_state;
+uint8_t social_state;
 uint32_t sleepat;
 uint32_t key_down_t;
 uint8_t key_pat_idx;
 bool shaken;
 uint16_t snow_speed;
+uint8_t my_id;
 
-#define SLEEP_TIMEOUT   (15000)
-#define IR_SPAN         (3000)
-#define SCENE_COUNT     14           
-
-#define ADDR_SAVE         0x000F000
-#define ADDR_ID           0x000F004
 
 //__EEPROM_DATA (0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
 
@@ -91,7 +87,7 @@ void rand_flakes(uint16_t t) {
     leds_set(pwm);
 }
 
-void TickIsr(void) {
+inline void TickIsr(void) {
     ++millis;
 }
 
@@ -125,15 +121,19 @@ bool testLogic() {
 }
 
 bool isComplete(uint8_t flag) {
-    return (game_state & (((uint32_t)1)<<flag)) > 0;
+    return (game_state >> flag) & 1;
+}
+
+void saveState() {
+    DATAEE_WriteByte(ADDR_SAVE, game_state & 0xFF);
+    DATAEE_WriteByte(ADDR_SAVE+1, game_state >> 8);
+    DATAEE_WriteByte(ADDR_SAVE+2, social_state);
 }
 
 void markComplete(uint8_t flag) {
     if (!isComplete(flag)) {
-        game_state |= (((uint32_t)1)<<flag);
-        DATAEE_WriteByte(ADDR_SAVE, game_state & 0xFF);
-        DATAEE_WriteByte(ADDR_SAVE+1, (game_state >> 8) &0xFF);
-        DATAEE_WriteByte(ADDR_SAVE+2, (game_state >> 16) &0xFF);
+        game_state |= (((uint16_t)1)<<flag);
+        saveState();
         snow_speed -= 10;
         if (flag < SOCIAL_BITS)
             showSolved();
@@ -142,18 +142,17 @@ void markComplete(uint8_t flag) {
 
 void loadState() {
     game_state = DATAEE_ReadByte(ADDR_SAVE) |
-        ((uint32_t)DATAEE_ReadByte(ADDR_SAVE+1) << 8) |
-        ((uint32_t)DATAEE_ReadByte(ADDR_SAVE+2) << 16);
-    //game_state=0;
+        ((uint16_t)DATAEE_ReadByte(ADDR_SAVE+1) << 8);
+    social_state = DATAEE_ReadByte(ADDR_SAVE+2);
     snow_speed = 360;
-    for (int i=0; i<24; ++i)
-        if (game_state & ((uint32_t)1 << i))
+    for (uint8_t i=0; i<16; ++i)
+        if ((game_state >> i) & 1)
             snow_speed -= 10;
 }
 
 static uint8_t s=0xaa,a=0;
 
-void seed_rnd() {
+inline void seed_rnd() {
     FVRCONbits.TSEN = 1; // enable temp
     s = ADC_GetConversion(channel_Temp) & 0xFF;
 }
@@ -190,27 +189,29 @@ void main(void)
     oled_init();
     mems_init();
     
-    leds_on();
-    __delay_ms(100);
+    if (PCON0bits.nRWDT) {
+        leds_on();
+        __delay_ms(100);
+    }
     leds_off();
     IrInit();
     
     seed_rnd();
     
-    uint8_t my_id = DATAEE_ReadByte(ADDR_ID);
+    my_id = DATAEE_ReadByte(ADDR_ID);
     
     if ( (my_id & 0xF8) != SOCIAL_BITS) {
         my_id = SOCIAL_BITS + rnd()%8;
-        DATAEE_WriteByte(ADDR_SAVE, 0);
-        DATAEE_WriteByte(ADDR_SAVE+1, 0);
-        DATAEE_WriteByte(ADDR_SAVE+2, 0);
+        game_state=0;
+        social_state=0;
+        saveState();
         DATAEE_WriteByte(ADDR_ID, my_id);
     }
     
     loadState();
     
     bool btn1 = false, btn2 = false;
-    uint8_t idx= TASK_EQUAL, c=0;
+    uint8_t idx= TASK_INTRO, c=0;
     sleepat = millis + SLEEP_TIMEOUT;
     uint32_t lastled = 0, lastIr = IR_SPAN;
     key_pat_idx=0;
@@ -321,8 +322,10 @@ void main(void)
                     social_draw(); break;
                 case TASK_PONG:
                     pong_draw(); break;
+                case TASK_INTRO:
+                    intro_draw(); break;
                 default:
-                    idx = TASK_EQUAL;
+                    idx = TASK_INTRO;
                     break;
             }
 
@@ -358,7 +361,7 @@ void main(void)
 
 
 void panic() {
-    for (int i=0; i<5; ++i) {
+    for (uint8_t i=0; i<5; ++i) {
         leds_on();
         CLRWDT();
         __delay_ms(500);

@@ -22,12 +22,9 @@ void canvas_clearScreen() {
         *ptr=0;
 }
 
-void canvas_drawPixel(int x, int y, bool on) {
+void canvas_drawPixel(int x, int y) {
     uint8_t b = y&7;
-    if (on)
-        canvas[x + (y/8)*OLED_WIDTH] |= (1<<b);
-    else
-        canvas[x + (y/8)*OLED_WIDTH] &= ~(1<<b);
+    canvas[x + (y/8)*OLED_WIDTH] |= (1<<b);
 }
 
 void canvas_drawLine(int x1, int y1, int x2, int y2) {
@@ -68,8 +65,8 @@ void canvas_drawVerticalLine(int16_t x, int y1, int y2) {
     if ((x<0) || (x>=OLED_WIDTH))
         return;
     uint8_t mask;
-    int s1 = max(min(y1, y2), 0);
-    int s2 = min(max(y1, y2), OLED_HEIGHT-1);
+    uint8_t s1 = max(min(y1, y2), 0);
+    uint8_t s2 = min(max(y1, y2), OLED_HEIGHT-1);
     int h = s2-s1;
     uint8_t mod= 8-(s1&7);
     if (mod) {
@@ -90,10 +87,10 @@ void canvas_drawVerticalLine(int16_t x, int y1, int y2) {
 }
 
 void canvas_drawImage(int x, int y, int w, int h, const uint8_t *data) {
-    for (int j=0; j<h; j+=8) {
+    for (uint8_t j=0; j<h; j+=8) {
         uint8_t *dst=&canvas[x+((y+j)/8)*OLED_WIDTH];
         uint8_t *src=&data[j/8*w];
-        for (int i=0; i<w; ++i)
+        for (uint8_t i=0; i<w; ++i)
             *dst++=*src++;
     }
 }
@@ -107,14 +104,15 @@ void canvas_drawImageSlow(int x, int y, int w, int h, const uint8_t *data) {
         for (int i=xs; i<xe; ++i) {
             uint8_t b = data[i + (j/8)*w];
             if ((b>> (j%8))&1)
-                canvas_drawPixel(x+i, y+j, true);
+                canvas_drawPixel(x+i, y+j);
         }
     }
 }
 
 void canvas_drawText(int x, int y, const char* text) {
-    for (int i=0; i<strlen(text); ++i) {
-        canvas_drawChar(x+i*6, y, text[i]);
+    uint8_t l=strlen(text);
+    for (uint8_t i=0; i<l; ++i) {
+        canvas_drawChar(x+i*6, y, *text++);
     }
 }
 
@@ -124,12 +122,12 @@ void canvas_drawChar(int x, int y, char c) {
     if (x<0) xs=-x;
     if (x>122) xe=127-x;
     if ((y%8)==0)
-        for (int i=xs; i<xe; ++i) {
+        for (uint8_t i=xs; i<xe; ++i) {
             canvas[x + i + (y/8)*OLED_WIDTH] = font5x7[c*5+i];
         }
     else {
         uint8_t dy = y%8;
-        for (int i=xs; i<xe; ++i) {
+        for (uint8_t i=xs; i<xe; ++i) {
             canvas[x + i + (y/8)*OLED_WIDTH + OLED_WIDTH] |= font5x7[c*5+i] >> (8-dy);
             canvas[x + i + (y/8)*OLED_WIDTH] |= font5x7[c*5+i] << dy;
         }
@@ -142,7 +140,7 @@ void canvas_drawTitle(const char* text) {
 }
 
 void canvas_fillRect(int x, int y, int w, int h) {
-    for (int i=0; i<w; ++i)
+    for (uint8_t i=0; i<w; ++i)
         canvas_drawVerticalLine(x+i,y, y+h-1);
 }
 

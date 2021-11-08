@@ -32,6 +32,7 @@ void lifts_draw(void);
 void ski_game_draw(void);
 void social_draw(void);
 void pong_draw(void);
+void intro_draw(void);
 
 #ifdef	__cplusplus
 }
