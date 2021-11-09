@@ -93,28 +93,33 @@ inline void TickIsr(void) {
 
 
 bool testLogic() {
+    uint8_t b;
     IO_RC6_SetLow();
     IO_RC7_SetLow();
     __delay_ms(2);
-    if (IO_RC5_GetValue() != 1)
+    b = IO_RC5_GetValue();
+    if (b == 0)
         return false;
     
     IO_RC6_SetLow();
     IO_RC7_SetHigh();
     __delay_ms(2);
-    if (IO_RC5_GetValue() != 1)
+    b = IO_RC5_GetValue();
+    if (b == 0)
         return false;
     
     IO_RC6_SetHigh();
     IO_RC7_SetLow();
     __delay_ms(2);
-    if (IO_RC5_GetValue() != 1)
+    b = IO_RC5_GetValue();
+    if (b == 0)
         return false;
     
     IO_RC6_SetHigh();
     IO_RC7_SetHigh();
     __delay_ms(2);
-    if (IO_RC5_GetValue() != 0)
+    b = IO_RC5_GetValue();
+    if (b != 0)
         return false;
     
     return true;
@@ -144,7 +149,7 @@ void loadState() {
     game_state = DATAEE_ReadByte(ADDR_SAVE) |
         ((uint16_t)DATAEE_ReadByte(ADDR_SAVE+1) << 8);
     social_state = DATAEE_ReadByte(ADDR_SAVE+2);
-    snow_speed = 360;
+    snow_speed = 320;
     for (uint8_t i=0; i<16; ++i)
         if ((game_state >> i) & 1)
             snow_speed -= 10;

@@ -39,7 +39,7 @@ void showSolved() {
     //canvas_drawText(28, 8, "!!!Solved!!!");
     canvas_blt();
     
-    for (int i=0; i<3; ++i) {
+    for (uint8_t i=0; i<3; ++i) {
         __delay_ms(100);
         oled_invert(true);
         __delay_ms(100);
@@ -61,6 +61,7 @@ void int2hex(uint16_t num, char* out) {
     *out = '\0';
 }
 
+
 void int2dec(uint16_t num, char* out) {
     for (int i=1000; i>0; i/=10){
         *out++ = '0' + (num/i);
@@ -68,47 +69,6 @@ void int2dec(uint16_t num, char* out) {
     }
     *out = '\0';
 }
-
-/*const uint8_t etch_pat[] = {
-    0x00, 0xFF, 0xFF, 0x00,
-    0x00, 0xF0, 0x0F, 0x00,
-    0x00, 0x0C, 0x30, 0x00,
-    0x00, 0xF0, 0x0F, 0x00,
-    0xFF, 0x00, 0x00, 0xFF,
-    0xFF, 0xFF, 0xFF, 0xFF
-};
-
-
-bool etch_check() {
-    
-    uint16_t score = 0;
-    for (int x=0; x<48; ++x)
-        for (int y=2; y<8; y++) {
-            if (canvas[x+y*128] == 0)
-                score++;
-            if (canvas[x+72+y*128] == 0)
-                score++;
-        }
-    
-    for (int x=0; x<4; ++x)
-        for (int y=2; y<8; ++y) {
-            uint8_t pat = etch_pat[x+(y-2)*4];
-            for (int i=0; i<8; ++i){
-                bool b = (pat >> (7-i)) & 1;
-                uint8_t c = canvas[64+x*8+i+y*128];
-                if (b && c>0)
-                    score += 5;
-                else if (!b && (c==0))
-                    score++;
-            }
-        }
-    char buf[10];
-    int2hex(score, buf);
-    canvas_drawText(0,0,buf);
-    checkSolved(TASK_ETCH);
-    return false;
-}
- */
 
 uint8_t etch_last[2];
 void etch_init() {
@@ -164,7 +124,7 @@ void tone_draw() {
         uint8_t y = 16 + sine_tbl[idx];
         if (x>=0) {
             if (y == lasty) {
-                canvas_drawPixel(x, y, true);
+                canvas_drawPixel(x, y);
             } else {
                 canvas_drawVerticalLine(x, y, lasty);
             }
@@ -177,19 +137,19 @@ void tone_draw() {
 }
 
 void digital_draw() {
-    const char message[] = "L*4,R*5\0";
-    uint8_t mlen = 8*8;
+    const char message[] = "LEFT4 RIGHT5\0\0\0\0\0";
+    uint8_t mlen = 8*16;
     
     uint16_t a1 =  getPot1() / 64;
     int a2 = getPot2() / 64;
     a2 -= 8;
-    a1+=2;
+    a1++;
     
     canvas_clearScreen();
     canvas_drawTitle("Logic Analyzer");
     checkSolved(TASK_DIGITAL);
     bool lastb;
-    for (int16_t x=-1; x<128; ++x) {
+    for (int x=-1; x<128; ++x) {
         int idx = (x+framecount)/a1;
         idx %= mlen;
         uint8_t i = idx/8;
@@ -200,13 +160,13 @@ void digital_draw() {
             if (b!=lastb) {
                 canvas_drawVerticalLine(x1, 17, 63);
             } else {
-                canvas_drawPixel(x1, b?17:63, true);
+                canvas_drawPixel(x1, b?17:63);
             } 
         }
         lastb=b;
     }
     canvas_blt();
-    framecount-=a2;
+    framecount+=a2;
 }
 
 void temp_draw() {
@@ -214,12 +174,12 @@ void temp_draw() {
     
     if ((framecount++ % 256 )== 0) {
         canvas_clearScreen();
-        canvas_drawTitle("Hit the Slopes");
+        canvas_drawTitle("Chill");
         checkSolved(TASK_TEMP);
         uint16_t temp=0, v1=0;
         const uint8_t samples=64;
 
-        for (int i=0; i<samples; ++i) {
+        for (uint8_t i=0; i<samples; ++i) {
             ADC_SelectChannel(channel_Temp);
             ADC_TemperatureAcquisitionDelay();
             temp += ADC_GetConversion(channel_Temp);
@@ -302,12 +262,12 @@ void static_draw() {
     };
     
     canvas_clearScreen();
-    canvas_drawTitle("Turn it off");
+    canvas_drawTitle("No Artifical Snow");
     checkSolved(TASK_TV);
     
     uint32_t msg = IrGetMessage();    
     if (msg) {
-        for (int i=0; i<30; ++i)
+        for (uint8_t i=0; i<30; ++i)
             if (msg == tvcodes[i]) {
                 markComplete(TASK_TV);
             }
@@ -325,7 +285,7 @@ void static_draw() {
         else if (framecount == 1)
             canvas_drawHorizontalLine(32,32,96);
         else if (framecount <4)
-            canvas_drawPixel(64,32,true);
+            canvas_drawPixel(64,32);
     }
     framecount++;
     canvas_blt();
@@ -341,13 +301,13 @@ void matrix_draw() {
         {'V', 'A', 'R'},
         {'Z', 'O', 'A'},
         {'O', 'O', 'O'},
-        {'E', 'G', 'A'},
+        {'E', 'Q', 'A'},
         {'D', 'D', 'X'}
     };
     const uint8_t xoffsets[] = {1, 15, 35, 50, 64, 77, 95, 113};
     const uint8_t yoffsets[] = {0, 58, 13, 33, 82, 25, 73, 47};
     canvas_clearScreen();
-    for (int i=0; i<8; ++i) {
+    for (uint8_t i=0; i<8; ++i) {
         uint8_t y = (yoffsets[i] + (framecount++)/4) % 96;
         uint8_t x = xoffsets[i];
         uint8_t m = xoffsets[i]%24;
@@ -372,7 +332,7 @@ void matrix_draw() {
 void clock_draw() {
     
     canvas_clearScreen();
-    canvas_drawTitle("Clock");
+    canvas_drawTitle("Hit the slopes");
     checkSolved(TASK_CLOCK);
     canvas_drawImage(40, 16, 48, 48, clock_bits);
     
@@ -432,8 +392,8 @@ void radio_draw() {
     
     for (uint8_t i=0; i<20; ++i) {
         x = i*32/5;
-        canvas_drawPixel(x, 32, true);
-        canvas_drawPixel(x, 47, true);
+        canvas_drawPixel(x, 32);
+        canvas_drawPixel(x, 47);
     }
     x = h * 2 / 3;
     canvas_drawVerticalLine(x-1, 32, 48);
@@ -505,7 +465,7 @@ void slider_draw() {
     v2[2] += p2%10;
     
     if ((p1 == 39) && (p2 == 55)) { //40 - 125
-        if(++correct_count > 32) {
+        if(++correct_count > 16) {
             markComplete(TASK_SLIDER);
         }
     }
@@ -513,7 +473,8 @@ void slider_draw() {
         correct_count=0;
     
     canvas_clearScreen();
-    canvas_drawTitle("U3 Ta");
+    canvas_drawTitle("RTFM");
+    canvas_drawText(49, 8, "U3 Ta");
     checkSolved(TASK_SLIDER);
     
     
@@ -529,12 +490,14 @@ void slider_draw() {
 
 extern uint32_t *social_messages;
 void social_draw() {
+    const char* word = "BACKSIDE";
     canvas_clearScreen();
     canvas_drawTitle("Social Retreat");
     checkSolved(TASK_SOCIAL);
+    canvas_drawChar(0,8, word[my_id - SOCIAL_BITS]);
     
     for (uint8_t i=0; i<8; ++i)
-        if (isComplete(i+SOCIAL_BITS))
+        if (((social_state >> i) & 1))
             canvas_drawImage(i*16, 16, 16, 48, art_strips[i]);
     
     uint32_t msg = IrGetMessage();
@@ -542,17 +505,24 @@ void social_draw() {
         uint8_t m = (msg >> 16);
         if ((m>=SOCIAL_BITS) && (m<(SOCIAL_BITS+8))) {
             uint8_t i = m - SOCIAL_BITS;
-            if (!isComplete(m)) 
-                markComplete(m);
+            if (((social_state >> i) & 1) == 0) {
+                social_state |= 1 << i;
+                saveState();
+            }
             canvas_fillRect(i*16, 16, 16, 48);
-            bool complete = (game_state >> 16) == 0xff;
+            bool complete = social_state == 0xff;
             if (complete) {
                 markComplete(TASK_SOCIAL);
             }
         }
     }
     
-    
+    if (isComplete(TASK_SOCIAL)) {
+        uint8_t ff = ((++framecount)/4) & 0x3;
+        if (ff<3) {
+            canvas_drawImage(45, 16, 10, 16, art_frames[ff]);
+        }
+    }
     canvas_blt();
 }
 
@@ -582,7 +552,7 @@ void ski_game_draw() {
         uint8_t sx = getPot1()/16;
         uint8_t sy = 56 - (getPot2()/26);
 
-        for (int i=0; i<16; ++i) {
+        for (uint8_t i=0; i<16; ++i) {
             int16_t dx = treesx[i];
             treesx[i]-=3;
             uint8_t dy = treesy[i];
@@ -609,7 +579,7 @@ void ski_game_draw() {
         sc[9] += (ski_score%100)/10;
         //sc[10] += ski_score%10;
         canvas_drawTitle("Ski game");
-        canvas_drawText(9,8, sc);
+        canvas_drawText(30,8, sc);
         canvas_blt();
         
         if ((ski_score > 1000) && !isComplete(TASK_SKI)) {
@@ -623,35 +593,33 @@ void ski_game_draw() {
 
 
 void lifts_draw() {
-    static int lift_idx[2]={24, 64};
+    static uint8_t lift_idx[2]={40, 80};
     static uint8_t lift_p[2] = {1, 0};
-    static int rift_idx[2]={6, 48};
+    static uint8_t rift_idx[2]={24, 64};
     canvas_clearScreen();
     canvas_drawTitle("Ski Lifts");
     checkSolved(TASK_LIFTS);
     
     if (isComplete(TASK_LIFTS)) {
         canvas_drawLine(42, 16, 127, 58);
-        for (int i=0; i<2; ++i) {
-            int idx = lift_idx[i];
-            if (idx>3)
-                canvas_drawVerticalLine(33+idx*2, 12+idx, 18+idx);
-            else if (idx>0)
-                canvas_drawVerticalLine(33+idx*2, 16, 18+idx);
-            canvas_drawImageSlow(22+idx*2, 18+idx, 20, 16, lifts_bits[lift_p[i]]);
-            if (--lift_idx[i] < -16) {
-                lift_idx[i] = 64;
+        canvas_drawLine(0, 20, 87, 63);
+        for (uint8_t i=0; i<2; ++i) {
+            uint8_t idx = lift_idx[i];
+            if (idx>19)
+                canvas_drawVerticalLine(1+idx*2, idx-4, 2+idx);
+            else if (idx>16)
+                canvas_drawVerticalLine(1+idx*2, 16, 2+idx);
+            canvas_drawImageSlow((int)(idx*2)-10, 2+idx, 20, 16, lifts_bits[lift_p[i]]);
+            if (--lift_idx[i] == 0) {
+                lift_idx[i] = 80;
                 lift_p[i] = rnd() % 3;
             }
-        }
-        canvas_drawLine(0, 20, 87, 63);
-        for (int i=0; i<2; ++i) {
-            int idx = rift_idx[i];
-            if (idx>3)
-                canvas_drawVerticalLine(-17+idx*2, 12+idx, 16+idx);
-            canvas_drawImageSlow(-25+idx*2, 16+idx, 20, 16, lifts_bits[3]);
-            if (++rift_idx[i] > 64)
-                rift_idx[i] = -16;
+            
+            idx = rift_idx[i];
+            canvas_drawVerticalLine((int)(idx*2)-49, idx-4, idx);
+            canvas_drawImageSlow((int)(idx*2)-56, idx, 20, 16, lifts_bits[3]);
+            if (++rift_idx[i] > 80)
+                rift_idx[i] = 0;
         }
     }
     else {
@@ -682,7 +650,7 @@ void assem_draw() {
     char val[3]={0};
     uint8_t v = ((getPot1()/64) << 4) | (getPot2()/64);
     canvas_clearScreen();
-    canvas_drawTitle("Egg Hunter");
+    canvas_drawTitle("Egg Hunter (x86)");
     checkSolved(TASK_ASSEM);
     for (uint8_t i=0; i<6; ++i) {
         canvas_drawText(0, 16+i*8, assem[i]);
@@ -761,6 +729,38 @@ void pong_draw() {
     canvas_drawChar(74, 0, p2_score + 0x30);
     canvas_drawVerticalLine(4, y1, y1+psize);
     canvas_drawVerticalLine(123, y2, y2+psize);
-    canvas_drawPixel(px, py, true);
+    canvas_drawPixel(px, py);
+    canvas_blt();
+}
+
+void intro_draw() {
+    canvas_clearScreen();
+    canvas_drawTitle("BSides SLC");
+    canvas_drawText(52, 8, "2021");
+    const char* intro_lines[] = {
+        " Thought you could",
+        "avoid tech questions",
+        "on your vacation? Ha!",
+        "Across the resort are",
+        "puzzles to test your",
+        "skills. Good luck!"
+    };
+    const char* victory_lines[] = {
+        "   Way to send it!",
+        "You nailed every",
+        "puzzle and cleared",
+        "the board.",
+        "       Gnarly!",
+        ""
+    };
+    char **ptr = intro_lines;
+    
+    if (game_state == 0x7FFF) {
+        canvas_drawImage(120, 0, 8, 8, check_bits);
+        ptr = victory_lines;
+    }
+    for (uint8_t i=16; i<64; i+=8)
+        canvas_drawText(0, i, *ptr++);
+    
     canvas_blt();
 }
